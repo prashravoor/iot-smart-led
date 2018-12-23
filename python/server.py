@@ -5,6 +5,12 @@ from flask import jsonify, Response, request
 
 app = Flask(__name__)
 
+# DB Configuration
+app.config['MYSQL_DATABASE_USER'] = 'root'
+app.config['MYSQL_DATABASE_PASSWORD'] = 'password'
+app.config['MYSQL_DATABASE_DB'] = 'smartled'
+app.config['MYSQL_DATABASE_HOST'] = 'localhost'
+
 ledCounter = 0
 ledPinNo = os.getenv('LED_PIN', 40)
 
