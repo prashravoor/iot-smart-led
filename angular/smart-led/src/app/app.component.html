@@ -1,0 +1,24 @@
+<router-outlet></router-outlet>
+
+<h1>{{title}}</h1>
+<div>
+  <span>Current Led State: </span>
+  <span>{{ledState}}</span>
+</div>
+<br>
+<br>
+<div>
+  <mat-slide-toggle name="ledSwitch" [(ngModel)] = "ledSwitch" (change)="switchToggled()">
+    <span>Toggle LED State</span>
+  </mat-slide-toggle>
+</div>
+<br>
+<div>
+  <h3>Select a Time to Switch on the LED</h3>
+  <label>
+    Time
+    <input [owlDateTimeTrigger]="dt4" [owlDateTime]="dt4">
+    <owl-date-time [pickerType]="'timer'" #dt4 [(ngModel)]="selectedMoment" name="time"></owl-date-time>
+    <button mat-raised-button color="primary" (click)="schedule()" [disabled]="!selectedMoment">Schedule</button>
+  </label>
+</div>
