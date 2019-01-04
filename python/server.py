@@ -4,6 +4,7 @@ import os
 from flask import jsonify, Response, request
 from dbconn import LedDatabase
 from threading import Timer
+import json
 
 from flask_cors import CORS
 
@@ -36,7 +37,7 @@ class Led(object):
         GPIO.cleanup()
 
     def getDict(self):
-        return { "id": self.id, "state": self.getState() }
+        return { "id": str(self.id), "state": self.getState() }
 
     def update(self):
         GPIO.output(self.pinNo, self.value)
@@ -61,14 +62,14 @@ class Led(object):
         return "Off"
 
     def get_stats(self):
-        return self.dbconnection.get_stats_for_led(self.id)
+        return self.led_db.get_stats_for_led(self.id)
 
 with app.app_context():
     led = Led(ledPinNo, app)
 
 @app.route('/lights', methods=['GET'])
 def get_lights():
-    return jsonify(led.getDict())
+    return jsonify([str(led.id)])
 
 
 @app.route('/lights/<id>', methods=['GET', 'PUT'])
@@ -96,9 +97,19 @@ def get_or_modify_light(id):
             return Response('{ "error": "At least one modification expected" }', status=400, mimetype='application/json')
         else:
             if swOnAfter > 0:
+                print("Setting timer to Switch On Lamp after {} seconds".format(swOnAfter))
                 Timer(swOnAfter, led.on, ()).start()
             if swOffAfter > 0:
+                print("Setting timer to Switch Off Lamp after {} seconds".format(swOffAfter))
                 Timer(swOffAfter, led.off, ()).start()
 
         return Response(str(led.getDict()), status=200, mimetype='application/json')
+
+
+@app.route('/lights/<id>/stats', methods=['GET'])
+def get_stats(id):
+    if not int(id) == led.id:
+        return Response("{'error' : 'Not Found'}", status=404, mimetype='application/json')
+
+    return Response(json.dumps(led.get_stats()), status=200, mimetype='application/json')
 
