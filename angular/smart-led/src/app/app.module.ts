@@ -10,10 +10,9 @@ import { AppComponent } from "./app.component";
 import { HttpClientModule } from "@angular/common/http";
 import { OwlDateTimeModule, OwlNativeDateTimeModule } from "ng-pick-datetime";
 import { MatButtonModule } from "@angular/material/button";
-import { StatsComponent } from './stats/stats.component';
 
 @NgModule({
-    declarations: [AppComponent, StatsComponent],
+    declarations: [AppComponent],
     imports: [
         BrowserModule,
         BrowserAnimationsModule,
