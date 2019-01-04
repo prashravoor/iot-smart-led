@@ -16,7 +16,7 @@ export class HttpService {
 
   constructor(private httpClient: HttpClient) { }
 
-  public get(relativeUrl: string, id: string = null): Promise<any> {
+  public get(relativeUrl: string, id?: string): Promise<any> {
     return new Promise<any>((resolve, reject) => {
       let url = this.baseUrl + relativeUrl;
       if (id) {

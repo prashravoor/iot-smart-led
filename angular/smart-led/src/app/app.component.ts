@@ -9,13 +9,15 @@ import { Led, LedModifyRequest } from "src/model";
 })
 export class AppComponent implements OnInit {
     title = "Smart LED";
-    ledId = undefined;
+    ledId = '0';
     led: Led = undefined;
     error = undefined;
     ledSwitch = false;
     ledState = "NA";
     public selectedMoment = new Date();
     public time: any;
+    public statsData = undefined;
+    public displayedColumns: string[] = ['switchOnTime', 'duration'];
 
     constructor(private httpService: HttpService) {}
 
@@ -53,7 +55,7 @@ export class AppComponent implements OnInit {
     }
 
     public setLedSwitch() {
-        if (this.led.state === "ON") {
+        if (this.led.state.toUpperCase() === "ON") {
             this.ledState = "ON";
             this.ledSwitch = true;
         } else {
@@ -66,20 +68,21 @@ export class AppComponent implements OnInit {
         let request: LedModifyRequest = {};
         if (this.ledSwitch === false) {
             request = <LedModifyRequest>{
-                switchOnAfter: 0
+                switchOffAfter: 0
             };
         } else {
             request = <LedModifyRequest>{
-                switchOffAfter: 0
+                switchOnAfter: 0
             };
         }
 
+        console.log(this);
         this.led = await this.httpService.put("lights", this.ledId, request);
         this.setLedSwitch();
     }
 
     public schedule(): void {
-        const diff: number = new Date().getTime() - this.selectedMoment.getTime();
+        const diff: number = (new Date().getTime() - this.selectedMoment.getTime()) / 1000;
         console.log("Scheduled!", diff);
         const req = {
             switchOnAfter: diff
@@ -92,5 +95,14 @@ export class AppComponent implements OnInit {
             .catch(error => {
                 console.error("Failed to set schedule: ", error);
             });
+    }
+
+    public async loadStats() {
+        this.statsData = await this.httpService.get('lights/' + this.ledId + '/stats');
+        this.statsData.forEach(element => {
+            const epoch = element.switchOnTime;
+            //console.log("Epoch: ", epoch, ", Date: ", new Date(0).setSeconds(element.switchOnTime));
+            element.switchOnTime = new Date(0).setSeconds(element.switchOnTime);
+        });
     }
 }

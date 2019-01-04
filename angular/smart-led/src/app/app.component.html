@@ -1,5 +1,3 @@
-<router-outlet></router-outlet>
-
 <h1>{{title}}</h1>
 <div>
   <span>Current Led State: </span>
@@ -8,7 +6,7 @@
 <br>
 <br>
 <div>
-  <mat-slide-toggle name="ledSwitch" [(ngModel)] = "ledSwitch" (change)="switchToggled()">
+  <mat-slide-toggle name="ledSwitch" [(ngModel)]="ledSwitch" (change)="switchToggled()">
     <span>Toggle LED State</span>
   </mat-slide-toggle>
 </div>
@@ -18,7 +16,30 @@
   <label>
     Time
     <input [owlDateTimeTrigger]="dt4" [owlDateTime]="dt4">
-    <owl-date-time [pickerType]="'timer'" #dt4 [(ngModel)]="selectedMoment" name="time"></owl-date-time>
+    <owl-date-time [pickerType]="'timer'" #dt4 [(ngModel)]="selectedMoment" name="time" ngDefaultControl></owl-date-time>
     <button mat-raised-button color="primary" (click)="schedule()" [disabled]="!selectedMoment">Schedule</button>
   </label>
+</div>
+<br>
+<br>
+<br>
+<div>
+  <h3>See Stats for LED!</h3>
+  <button mat-raised-button color="accent" (click)="loadStats()">Show Stats</button>
+  <table mat-table [dataSource]="statsData" class="mat-elevation-z8" *ngIf="statsData">
+    <!-- Time Column -->
+    <ng-container matColumnDef="switchOnTime">
+      <th mat-header-cell *matHeaderCellDef>Switch On Time</th>
+      <td mat-cell *matCellDef="let element"> {{ element.switchOnTime | date : 'short'}} </td>
+    </ng-container>
+
+    <!-- Duration Column -->
+    <ng-container matColumnDef="duration">
+      <th mat-header-cell *matHeaderCellDef>Duration (Seconds)</th>
+      <td mat-cell *matCellDef="let element"> {{element.duration | number }} </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
 </div>
