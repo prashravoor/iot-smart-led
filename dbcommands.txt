@@ -5,7 +5,8 @@ Open Client: sudo mysql -u root
 Run commands:
 
 ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'password';
-
+OR 
+GRANT ALL PRIVILEGES on *.* to 'root'@'localhost' IDENTIFIED BY 'password';
 flush privileges;
 ---------------------------
 
@@ -26,3 +27,5 @@ create table ledstats(
     FOREIGN KEY (id) REFERENCES led(id) ON UPDATE CASCADE,
     UNIQUE (id, switchOnTime)
 );
+
+INSERT INTO led VALUES ('0', 'Test');
